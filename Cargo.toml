@@ -1,0 +1,9 @@
+[package]
+name = "relayer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+web3 = "0.18.0"
+tokio = "1.22.0"
+hex = "*"

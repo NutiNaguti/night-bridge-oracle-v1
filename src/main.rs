@@ -1,10 +1,8 @@
 use hex_literal::hex;
 use std::env;
 use std::str::FromStr;
-use web3::api::{EthSubscribe, SubscriptionStream};
 use web3::futures::{future, StreamExt};
-use web3::signing;
-use web3::types::{BlockId, BlockNumber, FilterBuilder, H160, H2048, U64};
+use web3::types::{FilterBuilder, H160};
 
 #[tokio::main]
 async fn main() -> web3::Result<()> {
@@ -52,7 +50,12 @@ async fn main() -> web3::Result<()> {
     let sub = web3.eth_subscribe().subscribe_logs(filter).await?;
 
     sub.for_each(|log| {
-        println!("got log: {:?}", log);
+        match log {
+            Ok(data) => {
+                println!("{:?}", data)
+            }
+            Err(error) => panic!("{:?}", error),
+        }
         future::ready(())
     })
     .await;

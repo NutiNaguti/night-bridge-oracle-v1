@@ -16,8 +16,5 @@ pub struct Bloom {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv::dotenv().ok();
 
-    let client = near::setup_client("");
-    let _ = near::insert_filter(&client).await;
-
     Ok(())
 }

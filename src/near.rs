@@ -12,14 +12,14 @@ use serde_json::json;
 use crate::{eth::get_filter_and_block_number, Bloom};
 
 pub fn setup_client(connection_string: &str) -> JsonRpcClient {
-    // TODO: replace inner string by connection_string
-    JsonRpcClient::connect("https://rpc.testnet.near.org")
+    JsonRpcClient::connect(connection_string)
 }
 
-pub async fn insert_filter(client: &JsonRpcClient) -> Result<(), Box<dyn std::error::Error>> {
-    let result = get_filter_and_block_number().await;
-    let (block_number, logs) = (result.0, Bloom { logs: result.1 });
-
+pub async fn insert_filter(
+    client: &JsonRpcClient,
+    block_number: u64,
+    filter: Bloom,
+) -> Result<(), Box<dyn std::error::Error>> {
     let signer_account_id = env::var("ACCOUNT_ID").unwrap().parse().unwrap();
     let signer_secret_key = env::var("SECRET_KEY").unwrap().parse().unwrap();
 
@@ -49,7 +49,7 @@ pub async fn insert_filter(client: &JsonRpcClient) -> Result<(), Box<dyn std::er
             method_name: "insert_filter".to_string(),
             args: json!({
                 "block_number": block_number,
-                "bloom": logs
+                "bloom": filter
             })
             .to_string()
             .into_bytes(),

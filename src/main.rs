@@ -1,21 +1,13 @@
-use hex::FromHex;
 use hex_literal::hex;
-use near_jsonrpc_client::methods::tx::TransactionInfo;
-use std::env;
-use std::i64;
-use std::str::FromStr;
-use web3::ethabi::ethereum_types::BloomInput;
-use web3::futures::{future, StreamExt};
-use web3::transports::WebSocket;
-use web3::types::{BlockId, BlockNumber, FilterBuilder, H160, H2048, U64};
-use web3::{signing, Web3};
-
 use near_jsonrpc_client::{methods, JsonRpcClient};
 use near_jsonrpc_primitives::types::query::QueryResponseKind;
 use near_primitives::types::{BlockReference, Finality, FunctionArgs};
 use near_primitives::views::QueryRequest;
-use serde::Deserialize;
-use serde_json::{from_slice, json};
+use std::env;
+use std::str::FromStr;
+use web3::ethabi::ethereum_types::BloomInput;
+use web3::signing;
+use web3::types::{BlockId, BlockNumber, H160, U64};
 
 mod utils;
 

@@ -1,4 +1,3 @@
-use near_jsonrpc_client::JsonRpcClient;
 use std::io::{self, Write};
 
 pub fn input(query: &str) -> io::Result<String> {

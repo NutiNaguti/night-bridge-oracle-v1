@@ -9,7 +9,7 @@ use near_primitives::{
 };
 use serde_json::json;
 
-use crate::{eth::get_filter_and_block_number, Bloom};
+use crate::{eth, utils::Bloom};
 
 pub fn setup_client(connection_string: &str) -> JsonRpcClient {
     JsonRpcClient::connect(connection_string)

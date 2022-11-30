@@ -3,13 +3,17 @@ use std::env;
 use near_jsonrpc_client::{methods, JsonRpcClient};
 use near_jsonrpc_primitives::types::query::QueryResponseKind;
 use near_primitives::{
+    borsh::BorshSerialize,
     transaction::{Action, FunctionCallAction, Transaction},
     types::{BlockReference, Finality, FunctionArgs},
     views::QueryRequest,
 };
 use serde_json::json;
 
-use crate::{eth, utils::Bloom};
+use crate::{
+    eth,
+    utils::{Bloom, BloomRequest},
+};
 
 pub fn setup_client(connection_string: &str) -> JsonRpcClient {
     JsonRpcClient::connect(connection_string)
@@ -20,6 +24,11 @@ pub async fn insert_filter(
     block_number: u64,
     filter: Bloom,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    let request = BloomRequest {
+        block_number,
+        logs: near_primitives::serialize::to_base64(&filter.logs),
+    };
+
     let signer_account_id = env::var("ACCOUNT_ID").unwrap().parse().unwrap();
     let signer_secret_key = env::var("SECRET_KEY").unwrap().parse().unwrap();
 
@@ -43,16 +52,11 @@ pub async fn insert_filter(
         signer_id: signer.account_id.clone(),
         public_key: signer.public_key.clone(),
         nonce: current_nonce + 1,
-        receiver_id: "dev-1669574080300-19372117431608".parse()?,
+        receiver_id: env::var("CONTRACT_ACCOUNT_ID").unwrap().parse()?,
         block_hash: access_key_query_response.block_hash,
         actions: vec![Action::FunctionCall(FunctionCallAction {
             method_name: "insert_filter".to_string(),
-            args: json!({
-                "block_number": block_number,
-                "bloom": filter
-            })
-            .to_string()
-            .into_bytes(),
+            args: json!({ "request": request }).to_string().into_bytes(),
             gas: 100_000_000_000_000, // 100 TeraGas
             deposit: 0,
         })],
@@ -63,7 +67,7 @@ pub async fn insert_filter(
     };
 
     let tx_hash = client.call(request).await?;
-    println!("{}", tx_hash);
+    println!("tx hash: {}", tx_hash);
 
     Ok(())
 }

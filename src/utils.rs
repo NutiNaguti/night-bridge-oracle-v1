@@ -1,12 +1,18 @@
 use std::io::{self, Write};
 
+use near_primitives::borsh::{self, BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
-use serde_big_array::{self, BigArray};
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct Bloom {
+    pub logs: [u8; 256],
+}
 
 #[derive(Serialize, Deserialize)]
-pub struct Bloom {
-    #[serde(with = "BigArray")]
-    logs: [u8; 256],
+pub struct BloomRequest {
+    pub block_number: u64,
+    // base64
+    pub logs: String,
 }
 
 pub fn input(query: &str) -> io::Result<String> {

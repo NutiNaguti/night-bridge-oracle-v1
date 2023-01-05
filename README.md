@@ -1,3 +1,5 @@
+# !DEPRECATED! New version available at [night-bridge-oracle](https://github.com/NutiNaguti/night-bridge-oracle)
+
 Relayer
 ---------
 
